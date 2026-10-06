@@ -23,7 +23,7 @@ export default function ScoreboardStrip() {
           {matches.some((m) => m.statusKind === 'live') ? 'Ver ao vivo' : 'Central de partidas'}
         </Link>
       </div>
-      <div className="max-w-full overflow-x-auto rounded-lg bg-[#0B3D2E] text-white">
+      <div className="max-w-full overflow-x-auto rounded-lg bg-[#0B3D2E] text-white scrollbar-hide">
         <div className="flex min-w-max divide-x divide-white/10">
           {matches.map((match) => (
             <motion.div
