@@ -30,12 +30,12 @@ export default function ChromeHost({ headlines, alerts }: ChromeHostProps) {
     ) : null;
 
   return (
-    <>
+    <div className="w-full min-w-0">
       {chrome.breakingPosition === 'top' ? breaking : null}
       <Header />
       {showNav ? <CategoryNav /> : null}
       {chrome.breakingPosition === 'below-nav' ? breaking : null}
       {hasCapability('alerts-rail') ? <AlertsRail alerts={alerts} /> : null}
-    </>
+    </div>
   );
 }

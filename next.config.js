@@ -21,6 +21,10 @@ const nextConfig = {
         hostname: 'media.api-sports.io',
       },
       {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
       },

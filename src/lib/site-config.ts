@@ -207,30 +207,23 @@ export const siteConfig: SiteConfig = {
     }
   },
   navCategories: [
-    {
-      "name": "Série B",
-      "slug": "serie-b"
-    },
-    {
-      "name": "promotion race",
-      "slug": "promotion-race"
-    },
-    {
-      "name": "club news",
-      "slug": "club-news"
-    },
-    {
-      "name": "regional news",
-      "slug": "regional-news"
-    },
-    {
-      "name": "fixtures",
-      "slug": "fixtures"
-    },
-    {
-      "name": "results",
-      "slug": "results"
-    }
+    { "name": "Série B", "slug": "serie-b" },
+    { "name": "Acesso", "slug": "acesso" },
+    { "name": "Rebaixamento", "slug": "rebaixamento" },
+    { "name": "Brasileirão", "slug": "brasileirao" },
+    { "name": "Copa do Brasil", "slug": "copa-do-brasil" },
+    { "name": "Libertadores", "slug": "libertadores" },
+    { "name": "Seleção", "slug": "selecao" },
+    { "name": "Clubes", "slug": "clubes" },
+    { "name": "Regional", "slug": "regional" },
+    { "name": "Calendário", "slug": "calendario" },
+    { "name": "Resultados", "slug": "resultados" },
+    { "name": "Tabela", "slug": "tabela" },
+    { "name": "Transferências", "slug": "transferencias" },
+    { "name": "Partidas", "slug": "partidas" },
+    { "name": "Jogadores", "slug": "jogadores" },
+    { "name": "Notícias", "slug": "noticias" },
+    { "name": "Outros", "slug": "other" }
   ],
   competitions: [
     {
@@ -395,7 +388,7 @@ export const siteConfig: SiteConfig = {
     "FOOTBALL_TEAMS": "/football/teams?league=72&season=2026",
     "FOOTBALL_LEAGUES": "/football/leagues",
     "MARKETS": "TODO_MARKETS_API",
-    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola&page=1&limit=20",
+    "ARTICLES_LIST": "/ai-articles?targetWebsite=degraudabola.com&page=1&limit=20",
     "ARTICLE_BY_SLUG": "/ai-articles/slug/{slug}",
     "BANNERS": "/banners/public/degraudabola"
   },

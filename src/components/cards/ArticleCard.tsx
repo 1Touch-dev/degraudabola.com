@@ -59,8 +59,8 @@ export default function ArticleCard({
             ) : (
               <PlaceholderImage className="absolute inset-0" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+            <div className="absolute inset-0 hidden bg-gradient-to-t from-black/80 via-black/30 to-transparent md:block" />
+            <div className="absolute bottom-0 left-0 right-0 hidden p-4 md:block md:p-6">
               <span className="inline-block bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-white">
                 {article.category}
               </span>
@@ -69,7 +69,7 @@ export default function ArticleCard({
                   Vídeo
                 </span>
               )}
-              <h2 className="mt-2 font-heading text-xl font-bold leading-tight text-white md:text-3xl">
+              <h2 className="mt-2 font-heading text-3xl font-bold leading-tight text-white">
                 {article.title}
               </h2>
               <p className="mt-2 line-clamp-2 text-sm text-white/80">
@@ -79,6 +79,23 @@ export default function ArticleCard({
                 {article.author} · {formatRelativeDatePtBr(article.publishedAt)}
               </p>
             </div>
+          </div>
+          <div className="space-y-2 p-4 md:hidden">
+            <span className="inline-block bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+              {article.category}
+            </span>
+            {article.isVideo ? (
+              <span className="ml-2 inline-block bg-accent px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                Vídeo
+              </span>
+            ) : null}
+            <h2 className="break-words font-heading text-xl font-bold leading-tight text-foreground">
+              {article.title}
+            </h2>
+            <p className="line-clamp-3 text-sm text-muted">{article.excerpt}</p>
+            <p className="text-xs text-muted">
+              {article.author} · {formatRelativeDatePtBr(article.publishedAt)}
+            </p>
           </div>
         </Link>
       </article>
@@ -117,7 +134,7 @@ export default function ArticleCard({
             <span className="text-[10px] font-bold uppercase tracking-wide text-primary">
               {article.category}
             </span>
-            <h3 className="mt-0.5 font-heading text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary md:text-base">
+            <h3 className="mt-0.5 break-words font-heading text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary md:text-base">
               {article.title}
             </h3>
             <p className="mt-1 line-clamp-2 text-xs text-muted">{article.excerpt}</p>

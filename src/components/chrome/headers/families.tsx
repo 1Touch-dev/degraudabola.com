@@ -82,7 +82,7 @@ export function BroadcastScoreboardHeader() {
           <p
             className={cn(
               'truncate font-display uppercase tracking-[0.06em]',
-              chrome.logoScale === 'compact' ? 'text-xl' : 'text-2xl md:text-3xl',
+              chrome.logoScale === 'compact' ? 'text-lg' : 'text-lg sm:text-2xl md:text-3xl',
               compressed && 'md:text-2xl'
             )}
           >
@@ -110,7 +110,7 @@ export function BroadcastScoreboardHeader() {
         </div>
         <button
           type="button"
-          className="min-h-11 bg-[#E11D48] px-4 text-xs font-bold uppercase md:hidden"
+          className="min-h-11 shrink-0 bg-[#E11D48] px-4 text-xs font-bold uppercase md:hidden"
           aria-expanded={menuOpen}
           aria-controls={menuId}
           onClick={() => setMenuOpen((v) => !v)}
@@ -126,7 +126,7 @@ export function BroadcastScoreboardHeader() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={reduced ? undefined : { height: 0, opacity: 0 }}
             transition={transition(DURATION.base, !!reduced)}
-            className="overflow-hidden border-t border-white/15 px-4 py-3 md:hidden"
+            className="max-h-[70vh] overflow-y-auto border-t border-white/15 px-4 py-3 md:hidden"
           >
             <ul className="space-y-1 text-sm">
               {isSportsSite() ? (

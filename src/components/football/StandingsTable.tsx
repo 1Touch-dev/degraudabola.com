@@ -10,7 +10,7 @@ export default function StandingsTable({ rows }: { rows: StandingRow[] }) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
+    <div className="max-w-full overflow-x-auto rounded-xl border border-black/10 bg-white">
       <table className="w-full min-w-[28rem] border-collapse text-sm">
         <caption className="sr-only">Classificação</caption>
         <thead>

@@ -24,7 +24,7 @@ export default function CategoryNav() {
 
   const linkClass = (active: boolean) =>
     cn(
-      'shrink-0 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+      'inline-flex min-h-11 shrink-0 items-center px-3 text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
       active
         ? 'bg-primary text-white focus-visible:outline-accent'
         : dark
@@ -40,7 +40,7 @@ export default function CategoryNav() {
       )}
       aria-label="Categorias"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto px-4 py-2 scrollbar-hide">
+      <div className="mx-auto flex w-full min-w-0 max-w-7xl items-center gap-1 overflow-x-auto overscroll-x-contain px-4 py-2 scrollbar-hide">
         <Link href="/" className={linkClass(pathname === '/')}>
           Início
         </Link>
@@ -90,7 +90,7 @@ export default function CategoryNav() {
         })}
         <Link
           href="/categories"
-          className={cn(linkClass(pathname === '/categories'), 'ml-auto')}
+          className={linkClass(pathname === '/categories')}
         >
           Categorias
         </Link>

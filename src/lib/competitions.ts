@@ -5,6 +5,7 @@
 
 import { siteConfig } from '@/lib/site-config';
 import { hasCapability } from '@/lib/capabilities';
+import { articleEndpointSlugSet } from '@/lib/articleEndpoints';
 
 export type CompetitionKind = 'league' | 'cup' | 'national';
 
@@ -85,6 +86,7 @@ export function competitionLeagueIds(): number[] {
 
 /** Map news-nav slugs onto sports routes when live-scores is on. */
 export function navHrefForSlug(slug: string): string {
+  if (articleEndpointSlugSet.has(slug)) return `/categoria/${slug}`;
   if (!isSportsSite()) return `/categoria/${slug}`;
   if (slug === 'futebol' || slug === 'esportes' || slug === 'partidas') {
     return '/futebol';
@@ -106,5 +108,7 @@ export function articleNavCategories() {
     'tabelas',
     ...getCompetitions().map((c) => c.slug),
   ]);
-  return siteConfig.navCategories.filter((c) => !reserved.has(c.slug));
+  return siteConfig.navCategories.filter(
+    (c) => articleEndpointSlugSet.has(c.slug) || !reserved.has(c.slug)
+  );
 }

@@ -12,6 +12,11 @@ import {
 } from '@/data/dummy';
 import { siteConfig } from '@/lib/site-config';
 import { isPlaceholder } from '@/lib/placeholder-registry';
+import {
+  HOME_ARTICLE_ENDPOINT,
+  endpointNameForSlug,
+  slugForEndpointName,
+} from '@/lib/articleEndpoints';
 import { getResolvedIntegrations, loadPublicSiteConfig } from '@/lib/public-config';
 import { BRAZILIAN_STATES, getStateByUf, type BrazilianState } from '@/data/brazilian-states';
 
@@ -38,18 +43,19 @@ function cmsUrl(pathOrAbsolute?: string): string | null {
 
 function articlesListUrl(extra: Record<string, string | number | undefined> = {}): string {
   const fromCatalog = cmsUrl(getResolvedIntegrations().ARTICLES_LIST);
-  if (fromCatalog && !extra.category && !extra.search) {
-    return fromCatalog;
+  const url = new URL(fromCatalog || `${CMS_BASE}/ai-articles`);
+  if (!fromCatalog) {
+    url.searchParams.set('targetWebsite', WEBSITE_KEY);
+    url.searchParams.set('page', String(extra.page ?? 1));
+    url.searchParams.set('limit', String(extra.limit ?? 40));
   }
-  const params = new URLSearchParams({
-    targetWebsite: WEBSITE_KEY,
-    page: String(extra.page ?? 1),
-    limit: String(extra.limit ?? 40),
-  });
-  if (extra.category) params.set('category', String(extra.category));
-  if (extra.search) params.set('search', String(extra.search));
-  if (extra.slug) params.set('slug', String(extra.slug));
-  return `${CMS_BASE}/ai-articles?${params.toString()}`;
+  if (extra.page) url.searchParams.set('page', String(extra.page));
+  if (extra.limit) url.searchParams.set('limit', String(extra.limit));
+  if (extra.category) url.searchParams.set('category', String(extra.category));
+  if (extra.search) url.searchParams.set('search', String(extra.search));
+  if (extra.slug) url.searchParams.set('slug', String(extra.slug));
+  url.searchParams.set('endpoint', String(extra.endpoint || HOME_ARTICLE_ENDPOINT));
+  return url.toString();
 }
 
 function articleBySlugUrl(slug: string): string {
@@ -77,9 +83,14 @@ function mapCmsArticle(raw: Record<string, unknown>, index = 0): Article {
       ? [String(raw.category)]
       : [];
   const nav = siteConfig.navCategories;
-  const categoryName = cats[0] || nav[index % Math.max(nav.length, 1)]?.name || 'Notícias';
+  const assigned = assignedEndpointName(raw);
+  const categoryName =
+    assigned || cats[0] || nav[index % Math.max(nav.length, 1)]?.name || 'Notícias';
   const categorySlug =
-    slugify(cats[0] || '') || nav.find((c) => c.name === categoryName)?.slug || slugify(categoryName);
+    slugForEndpointName(categoryName) ||
+    slugify(categoryName) ||
+    nav.find((c) => c.name === categoryName)?.slug ||
+    'noticias';
   const authors = Array.isArray(raw.authorNames) ? (raw.authorNames as string[]) : [];
   const images = Array.isArray(raw.imageUrls) ? (raw.imageUrls as string[]) : [];
   const seo =
@@ -104,6 +115,18 @@ function mapCmsArticle(raw: Record<string, unknown>, index = 0): Article {
     readCount: typeof raw.views === 'number' ? raw.views : undefined,
     featured: index === 0,
   };
+}
+
+function assignedEndpointName(raw: Record<string, unknown>): string {
+  const section = typeof raw.websiteSection === 'string' ? raw.websiteSection.trim() : '';
+  if (section) return section;
+  const assignments = Array.isArray(raw.endpointAssignments) ? raw.endpointAssignments : [];
+  for (const item of assignments) {
+    if (!item || typeof item !== 'object') continue;
+    const name = (item as Record<string, unknown>).name;
+    if (typeof name === 'string' && name.trim()) return name.trim();
+  }
+  return '';
 }
 
 function sortByDate(items: Article[]): Article[] {
@@ -143,16 +166,23 @@ function dummyArticles(): Article[] {
   return withSiteCategories(rawArticles);
 }
 
-let liveCache: { at: number; items: Article[] } | null = null;
+const liveCache = new Map<string, { at: number; items: Article[] }>();
 const LIVE_TTL_MS = 60_000;
 
-async function fetchLiveArticles(): Promise<Article[] | null> {
+async function fetchLiveArticles(options?: {
+  endpoint?: string;
+  limit?: number;
+}): Promise<Article[] | null> {
   if (!CMS_BASE || !WEBSITE_KEY) return null;
-  if (liveCache && Date.now() - liveCache.at < LIVE_TTL_MS) return liveCache.items;
+  const endpoint = options?.endpoint || HOME_ARTICLE_ENDPOINT;
+  const limit = options?.limit ?? 40;
+  const cacheKey = `${endpoint}:${limit}`;
+  const cached = liveCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < LIVE_TTL_MS) return cached.items;
 
   try {
     await loadPublicSiteConfig();
-    const res = await fetch(articlesListUrl({ limit: 40 }), {
+    const res = await fetch(articlesListUrl({ limit, endpoint }), {
       headers: { Accept: 'application/json' },
     });
     if (!res.ok) return null;
@@ -165,7 +195,7 @@ async function fetchLiveArticles(): Promise<Article[] | null> {
       .filter((a) => a.slug && a.title);
 
     if (!items.length) return null;
-    liveCache = { at: Date.now(), items };
+    liveCache.set(cacheKey, { at: Date.now(), items });
     return items;
   } catch {
     return null;
@@ -202,6 +232,11 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
 }
 
 export async function getByCategory(categorySlug: string, limit = 10): Promise<Article[]> {
+  const endpoint = endpointNameForSlug(categorySlug);
+  if (endpoint) {
+    const live = await fetchLiveArticles({ endpoint, limit: Math.max(limit, 40) });
+    if (live) return sortByDate(live).slice(0, limit);
+  }
   const all = await resolveArticles();
   return sortByDate(all.filter((article) => article.categorySlug === categorySlug)).slice(
     0,
