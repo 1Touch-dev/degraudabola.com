@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -78,7 +79,9 @@ export function BroadcastScoreboardHeader() {
           compressed && chrome.stickyMode === 'compact' ? 'py-1.5' : 'py-2.5'
         )}
       >
-        <Link href="/" className="min-w-0">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <Image src="/logo.png" alt="" width={40} height={40} className="size-10 shrink-0 object-cover" />
+          <span className="min-w-0">
           <p
             className={cn(
               'truncate font-display uppercase tracking-[0.06em]',
@@ -93,6 +96,7 @@ export function BroadcastScoreboardHeader() {
               {tagline}
             </p>
           ) : null}
+          </span>
         </Link>
         <div className="hidden items-center gap-4 md:flex">
           {extra.slice(0, 4).map((l) => (
@@ -382,13 +386,16 @@ export function VisualTrendingHeader() {
           compressed && chrome.stickyMode === 'compact' ? 'py-2' : 'py-4'
         )}
       >
-        <Link href="/" className="min-w-0">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <Image src="/logo.png" alt="" width={40} height={40} className="size-10 shrink-0 object-cover" />
+          <span className="min-w-0">
           <p className="font-display text-2xl tracking-tight text-foreground md:text-3xl">
             {siteConfig.siteName}
           </p>
           {siteConfig.tagline ? (
             <p className="mt-0.5 text-xs text-muted">{siteConfig.tagline}</p>
           ) : null}
+          </span>
         </Link>
         <div className="flex items-center gap-2">
           <Link

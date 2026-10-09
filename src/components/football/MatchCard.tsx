@@ -6,11 +6,11 @@ function Crest({ team, size = 28 }: { team: TeamSide; size?: number }) {
   if (!team.logo) {
     return (
       <span
-        className="inline-flex shrink-0 items-center justify-center rounded-full bg-black/10 text-[10px] font-bold uppercase text-secondary"
+        className="inline-flex shrink-0 items-center justify-center rounded-full bg-black/10 text-[8px] font-bold uppercase text-secondary"
         style={{ width: size, height: size }}
         aria-hidden
       >
-        {team.name.slice(0, 1)}
+        {team.name.replace(/[^A-Za-zÀ-ÿ]/g, "").slice(0, 3).toUpperCase()}
       </span>
     );
   }
