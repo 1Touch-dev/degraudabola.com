@@ -104,33 +104,22 @@ export default function ArticleCard({
 
   if (variant === 'horizontal') {
     return (
-      <article
-        className={cn(
-          'group flex gap-3 border-b border-black/10 py-3 last:border-0',
-          className
-        )}
-      >
-        <Link
-          href={href}
-          className={cn(
-            'relative h-20 w-28 shrink-0 overflow-hidden rounded md:h-24 md:w-36',
-            focusRing
-          )}
-        >
-          {article.imageUrl ? (
-            <Image
-              src={article.imageUrl}
-              alt=""
-              fill
-              className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
-              sizes="144px"
-            />
-          ) : (
-            <PlaceholderImage className="h-full w-full" />
-          )}
-        </Link>
-        <div className="min-w-0 flex-1">
-          <Link href={href} className={cn('block', focusRing)}>
+      <article className={cn('group border-b border-black/10 py-3 last:border-0', className)}>
+        <Link href={href} className={cn('flex gap-3', focusRing)}>
+          <span className="relative h-20 w-28 shrink-0 overflow-hidden rounded md:h-24 md:w-36">
+            {article.imageUrl ? (
+              <Image
+                src={article.imageUrl}
+                alt=""
+                fill
+                className="object-cover transition-transform duration-300 ease-out group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
+                sizes="144px"
+              />
+            ) : (
+              <PlaceholderImage className="h-full w-full" />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
             <span className="text-[10px] font-bold uppercase tracking-wide text-primary">
               {article.category}
             </span>
@@ -142,8 +131,8 @@ export default function ArticleCard({
               {formatRelativeDatePtBr(article.publishedAt)}
               {article.isVideo && ' · Vídeo'}
             </p>
-          </Link>
-        </div>
+          </span>
+        </Link>
       </article>
     );
   }
