@@ -1,6 +1,7 @@
 import '../../generated/design-tokens.css';
 import './globals.css';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import ChromeHost from '@/components/chrome/ChromeHost';
 import Footer from '@/components/chrome/Footer';
 import { getAlerts, getBreakingHeadlines } from '@/lib/cms-client';
@@ -61,6 +62,16 @@ export default async function RootLayout({
         data-footer-family={siteConfig.chrome?.footer?.family || 'legacy'}
         className={`flex min-h-screen flex-col overflow-x-hidden ${densityClass} ${motionClass}`}
       >
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-1P66SZGVR3"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-1P66SZGVR3');`}
+        </Script>
         <a
           href="#conteudo-principal"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:ring"
