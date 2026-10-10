@@ -157,7 +157,7 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  siteName: "egrau da Bola",
+  siteName: "Degrau da Bola",
   tagline: "Cada ponto, um passo pro acesso",
   description: "Cada ponto, um passo pro acesso",
   locale: {"language":"pt","dialect":"pt-BR","timezone":"America/Sao_Paulo"},
