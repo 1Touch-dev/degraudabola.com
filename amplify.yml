@@ -1,0 +1,22 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install 20
+        - nvm use 20
+        - node -v
+        - yarn install --frozen-lockfile
+    build:
+      commands:
+        - nvm use 20
+        - env | grep -E '^(NEXT_PUBLIC_|INDEXNOW_)' >> .env.production || true
+        - yarn build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

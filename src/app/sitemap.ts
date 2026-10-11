@@ -9,9 +9,32 @@ import {
 import { getCompetitions, isSportsSite } from "@/lib/competitions";
 import { absoluteUrl } from "@/lib/site-url";
 
-/** Build-time static sitemap so Google Search Console can fetch reliably. */
+/** Build-time static sitemap so Google never hits a cold CMS/Lambda path. */
 export const dynamic = "force-static";
 export const revalidate = 3600;
+
+const CMS_MS = 3500;
+
+const asDate = (value?: string): Date => {
+  if (!value) return new Date();
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) ? date : new Date();
+};
+
+const withTimeout = async <T>(promise: Promise<T>, fallback: T): Promise<T> => {
+  const timedOut = Symbol("sitemap-timeout");
+  try {
+    const result = await Promise.race([
+      promise,
+      new Promise<typeof timedOut>((resolve) => {
+        setTimeout(() => resolve(timedOut), CMS_MS);
+      }),
+    ]);
+    return result === timedOut ? fallback : result;
+  } catch {
+    return fallback;
+  }
+};
 
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const now = new Date();
@@ -32,10 +55,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   }
 
   const [articles, categories, states, liveStories] = await Promise.all([
-    getLatestArticles(200),
-    getCategories(),
-    hasCapability("states-directory") ? getBrazilianStates() : Promise.resolve([]),
-    getLiveStories(),
+    withTimeout(getLatestArticles(200), []),
+    withTimeout(getCategories(), []),
+    hasCapability("states-directory")
+      ? withTimeout(getBrazilianStates(), [])
+      : Promise.resolve([]),
+    withTimeout(getLiveStories(), []),
   ]);
 
   return [
@@ -65,7 +90,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     })),
     ...articles.map((article) => ({
       url: absoluteUrl(`/artigo/${article.slug}`),
-      lastModified: new Date(article.publishedAt),
+      lastModified: asDate(article.publishedAt),
       changeFrequency: "weekly" as const,
       priority: 0.9,
     })),

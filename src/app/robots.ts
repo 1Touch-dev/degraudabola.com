@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, siteUrl } from "@/lib/site-url";
+import { absoluteUrl } from "@/lib/site-url";
 
 const agents = [
   "*",
@@ -33,7 +33,7 @@ const robots = (): MetadataRoute.Robots => ({
     disallow: ["/newsletter/unsubscribe", "/busca"],
   })),
   sitemap: [absoluteUrl("/sitemap.xml"), absoluteUrl("/news-sitemap.xml")],
-  host: siteUrl,
+  host: "degraudabola.com",
 });
 
 export default robots;
