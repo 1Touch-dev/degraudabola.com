@@ -1,42 +1,19 @@
 import type { MetadataRoute } from "next";
+import { articles as seedArticles, liveStories as seedLiveStories } from "@/data/dummy";
+import { BRAZILIAN_STATES } from "@/data/brazilian-states";
 import { hasCapability } from "@/lib/capabilities";
-import {
-  getBrazilianStates,
-  getCategories,
-  getLatestArticles,
-  getLiveStories,
-} from "@/lib/cms-client";
 import { getCompetitions, isSportsSite } from "@/lib/competitions";
+import { siteConfig } from "@/lib/site-config";
 import { absoluteUrl } from "@/lib/site-url";
 
-/** Build-time static sitemap so Google never hits a cold CMS/Lambda path. */
+/**
+ * Fully static sitemap — no CMS/network calls.
+ * Amplify cold starts were returning 500 to Google ("Couldn't fetch").
+ */
 export const dynamic = "force-static";
-export const revalidate = 3600;
+export const revalidate = false;
 
-const CMS_MS = 3500;
-
-const asDate = (value?: string): Date => {
-  if (!value) return new Date();
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) ? date : new Date();
-};
-
-const withTimeout = async <T>(promise: Promise<T>, fallback: T): Promise<T> => {
-  const timedOut = Symbol("sitemap-timeout");
-  try {
-    const result = await Promise.race([
-      promise,
-      new Promise<typeof timedOut>((resolve) => {
-        setTimeout(() => resolve(timedOut), CMS_MS);
-      }),
-    ]);
-    return result === timedOut ? fallback : result;
-  } catch {
-    return fallback;
-  }
-};
-
-const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
+const sitemap = (): MetadataRoute.Sitemap => {
   const now = new Date();
   const hubs = [
     "/",
@@ -54,14 +31,9 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     hubs.push("/estados");
   }
 
-  const [articles, categories, states, liveStories] = await Promise.all([
-    withTimeout(getLatestArticles(200), []),
-    withTimeout(getCategories(), []),
-    hasCapability("states-directory")
-      ? withTimeout(getBrazilianStates(), [])
-      : Promise.resolve([]),
-    withTimeout(getLiveStories(), []),
-  ]);
+  const categories =
+    siteConfig.navCategories?.map((category) => category.slug) ??
+    [];
 
   return [
     ...hubs.map((path) => ({
@@ -70,13 +42,13 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: path === "/" ? ("hourly" as const) : ("daily" as const),
       priority: path === "/" ? 1 : 0.7,
     })),
-    ...categories.map((category) => ({
-      url: absoluteUrl(`/categoria/${category.slug}`),
+    ...categories.map((slug) => ({
+      url: absoluteUrl(`/categoria/${slug}`),
       lastModified: now,
       changeFrequency: "daily" as const,
       priority: 0.7,
     })),
-    ...states.map((state) => ({
+    ...(hasCapability("states-directory") ? BRAZILIAN_STATES : []).map((state) => ({
       url: absoluteUrl(`/estados/${state.slug}`),
       lastModified: now,
       changeFrequency: "weekly" as const,
@@ -88,13 +60,13 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       changeFrequency: "hourly" as const,
       priority: 0.8,
     })),
-    ...articles.map((article) => ({
+    ...seedArticles.map((article) => ({
       url: absoluteUrl(`/artigo/${article.slug}`),
-      lastModified: asDate(article.publishedAt),
+      lastModified: new Date(article.publishedAt),
       changeFrequency: "weekly" as const,
       priority: 0.9,
     })),
-    ...liveStories.map((story) => ({
+    ...seedLiveStories.map((story) => ({
       url: absoluteUrl(`/ao-vivo/${story.slug}`),
       lastModified: now,
       changeFrequency: "hourly" as const,
