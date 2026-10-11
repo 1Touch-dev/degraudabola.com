@@ -167,6 +167,7 @@ export const siteConfig: SiteConfig = {
     collections: ["feed_brazil","aiarticles"],
   },
   seo: {
+    canonicalHost: process.env.NEXT_PUBLIC_SITE_URL || "https://degraudabola.com",
     defaultOgImage: "/og-image.jpg",
   },
   layouts: {
