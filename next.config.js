@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Preferred URL shape: no trailing slash (matches sitemap + canonicals).
+  trailingSlash: false,
   images: {
     formats: ["image/webp"],
     remotePatterns: [

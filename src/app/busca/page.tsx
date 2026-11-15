@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 import SearchLayout from '@/components/search/SearchLayout';
 import { search } from '@/lib/cms-client';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata: Metadata = {
+// Canonical is /busca without query params (search queries are not indexable URLs).
+export const metadata: Metadata = pageMetadata({
   title: 'Busca',
   description: `Busque notícias em ${siteConfig.siteName}`,
-};
+  path: '/busca',
+  noIndex: true,
+});
 
 interface BuscaPageProps {
   searchParams: Promise<{ q?: string }>;

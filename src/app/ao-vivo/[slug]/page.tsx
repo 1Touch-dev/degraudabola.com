@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getLiveStoryBySlug } from '@/lib/cms-client';
 import { hasCapability } from '@/lib/capabilities';
+import { pageMetadata } from '@/lib/seo';
 import { formatDatePtBr } from '@/lib/utils';
 import { siteConfig } from '@/lib/site-config';
 
@@ -13,11 +14,12 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const story = await getLiveStoryBySlug(slug);
-  if (!story) return { title: 'Ao vivo' };
-  return {
+  if (!story) return { title: 'Ao vivo', robots: { index: false, follow: false } };
+  return pageMetadata({
     title: story.title,
     description: story.summary,
-  };
+    path: `/ao-vivo/${slug}`,
+  });
 }
 
 export default async function AoVivoPage({ params }: PageProps) {

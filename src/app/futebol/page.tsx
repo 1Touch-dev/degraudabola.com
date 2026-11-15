@@ -5,14 +5,16 @@ import MatchCard from '@/components/football/MatchCard';
 import CompetitionTabs from '@/components/football/CompetitionTabs';
 import { hasCapability } from '@/lib/capabilities';
 import { fetchHubPayload } from '@/lib/football-client';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
 export const revalidate = 45;
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Partidas',
   description: `Jogos ao vivo, hoje e próximos de ${siteConfig.siteName}`,
-};
+  path: '/futebol',
+});
 
 export default async function FutebolHubPage() {
   if (!hasCapability('live-scores')) notFound();

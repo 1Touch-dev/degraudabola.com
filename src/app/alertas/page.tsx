@@ -4,12 +4,14 @@ import { notFound } from 'next/navigation';
 import { getAlerts } from '@/lib/cms-client';
 import { hasCapability } from '@/lib/capabilities';
 import { formatDatePtBr } from '@/lib/utils';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Alertas',
   description: `Alertas e avisos de ${siteConfig.siteName}`,
-};
+  path: '/alertas',
+});
 
 export default async function AlertasPage() {
   if (!hasCapability('alerts-rail')) notFound();

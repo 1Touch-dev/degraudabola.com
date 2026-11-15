@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import { unsubscribeNewsletter, type UnsubscribeResult } from '@/lib/newsletter';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Cancelar newsletter',
-  robots: { index: false, follow: false },
-};
+  path: '/newsletter/unsubscribe',
+  noIndex: true,
+});
 
 interface IUnsubscribePageProps {
   searchParams: Promise<{ email?: string; website?: string }>;

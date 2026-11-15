@@ -3,12 +3,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getBrazilianStates } from '@/lib/cms-client';
 import { hasCapability } from '@/lib/capabilities';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Estados',
   description: `Cobertura por estado — ${siteConfig.siteName}`,
-};
+  path: '/estados',
+});
 
 export default async function EstadosPage() {
   if (!hasCapability('states-directory')) notFound();

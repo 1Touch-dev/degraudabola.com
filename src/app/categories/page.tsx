@@ -2,12 +2,14 @@ import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCategories } from '@/lib/cms-client';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Categorias',
   description: `Explore todas as seções de ${siteConfig.siteName}`,
-};
+  path: '/categories',
+});
 
 export default async function CategoriesPage() {
   const categories = await getCategories();

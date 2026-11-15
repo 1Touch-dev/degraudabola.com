@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import ArticleCard from '@/components/cards/ArticleCard';
 import { getBrazilianState, getLatestArticles } from '@/lib/cms-client';
 import { hasCapability } from '@/lib/capabilities';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
 interface PageProps {
@@ -13,11 +14,12 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { uf } = await params;
   const state = await getBrazilianState(uf);
-  if (!state) return { title: 'Estado' };
-  return {
+  if (!state) return { title: 'Estado', robots: { index: false, follow: false } };
+  return pageMetadata({
     title: state.name,
     description: `Cobertura de ${state.name} em ${siteConfig.siteName}`,
-  };
+    path: `/estados/${state.slug}`,
+  });
 }
 
 export default async function EstadoUfPage({ params }: PageProps) {

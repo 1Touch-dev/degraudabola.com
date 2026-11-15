@@ -7,14 +7,16 @@ import ArticleCard from '@/components/cards/ArticleCard';
 import { hasCapability } from '@/lib/capabilities';
 import { fetchLiveMatches, fetchUpcoming } from '@/lib/football-client';
 import { getCompetitions } from '@/lib/competitions';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
 export const revalidate = 30;
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: 'Ao vivo',
   description: `Placares e cobertura ao vivo em ${siteConfig.siteName}`,
-};
+  path: '/ao-vivo',
+});
 
 export default async function AoVivoPage() {
   const sports = hasCapability('live-scores');

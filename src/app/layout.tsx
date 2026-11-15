@@ -9,6 +9,7 @@ import EditorialBanner from '@/components/cms/EditorialBanner';
 import { getAlerts, getBreakingHeadlines } from '@/lib/cms-client';
 import { siteConfig } from '@/lib/site-config';
 import { hasCapability } from '@/lib/capabilities';
+import { siteUrl } from '@/lib/site-url';
 
 export const metadata: Metadata = {
   title: {
@@ -16,9 +17,9 @@ export const metadata: Metadata = {
     default: siteConfig.siteName,
   },
   description: siteConfig.description,
-  metadataBase: siteConfig.seo.canonicalHost
-    ? new URL(siteConfig.seo.canonicalHost)
-    : undefined,
+  // Prefer HTTPS non-WWW origin; do not set a global homepage canonical here
+  // (would incorrectly inherit onto every child route).
+  metadataBase: new URL(siteUrl),
   icons: {
     icon: [{ url: '/logo.png', type: 'image/png' }],
     apple: [{ url: '/logo.png', type: 'image/png' }],

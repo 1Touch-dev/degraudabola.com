@@ -12,6 +12,7 @@ import {
   fetchStandingsFor,
   fetchUpcoming,
 } from '@/lib/football-client';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
 export const revalidate = 60;
@@ -23,11 +24,14 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const competition = getCompetitionBySlug(slug);
-  if (!competition) return { title: 'Liga' };
-  return {
+  if (!competition) {
+    return { title: 'Liga', robots: { index: false, follow: false } };
+  }
+  return pageMetadata({
     title: competition.name,
     description: `${competition.name} — classificação, artilharia e próximos jogos em ${siteConfig.siteName}`,
-  };
+    path: `/liga/${competition.slug}`,
+  });
 }
 
 export default async function LigaPage({ params }: PageProps) {

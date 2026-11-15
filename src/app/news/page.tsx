@@ -2,12 +2,14 @@ import AffiliateFeed from '@/components/affiliate/AffiliateFeed';
 import type { Metadata } from 'next';
 import ArticleCard from '@/components/cards/ArticleCard';
 import { getLatestArticles } from '@/lib/cms-client';
+import { pageMetadata } from '@/lib/seo';
 import { siteConfig } from '@/lib/site-config';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'Últimas notícias',
   description: `Todas as últimas notícias de ${siteConfig.siteName}`,
-};
+  path: '/news',
+});
 
 export default async function NewsPage() {
   const articles = await getLatestArticles(20);
